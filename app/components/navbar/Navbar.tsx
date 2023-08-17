@@ -4,17 +4,18 @@ import Container from '../Container'
 import Logo from './Logo'
 import MenuItem from './NavLink'
 import NavbarLinks from './NavbarLinks'
-import Search from './Search'
-import UserLinks from './UserLinks'
+
 import ActionLinks from './ActionLinks'
 import { useState, useCallback } from 'react'
-import Genres from './genres/Genres'
 
 import { CgMenu } from 'react-icons/cg'
+import { SafeUser } from '@/app/types'
 
-interface NavbarProps {}
+interface NavbarProps {
+    currentUser?: SafeUser | null
+}
 
-const Navbar: React.FC<NavbarProps> = ({}) => {
+const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
 
     // toggle menu
@@ -31,7 +32,7 @@ const Navbar: React.FC<NavbarProps> = ({}) => {
                         {/* Navbar items */}
                         <NavbarLinks />
                         {/* user items */}
-                        <ActionLinks />
+                        <ActionLinks currentUser={currentUser} />
 
                         {/* Mobile menu */}
                         <div

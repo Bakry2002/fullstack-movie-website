@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 import Avatar from '../Avatar'
 import Link from 'next/link'
 import NavLink from './NavLink'
+import { signOut } from 'next-auth/react'
 
 import { AiOutlineUser, AiOutlineStar } from 'react-icons/ai'
 import { CiLogout, CiLogin } from 'react-icons/ci'
@@ -17,9 +18,10 @@ import { IoCreateOutline } from 'react-icons/io5'
 import { handleClickOutsideElementContainer } from '@/app/utils/helper'
 import useRegisterModal from '@/app/hooks/useRegisterModal'
 import useLoginModal from '@/app/hooks/useLoginModal'
+import { SafeUser } from '@/app/types'
 
 interface UserMenuProps {
-    currentUser?: any
+    currentUser?: SafeUser | null
 }
 
 const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
@@ -48,11 +50,11 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
                 } flex hover:bg-secondary`}
             >
                 <div className="flex h-7 w-10 items-center justify-center rounded-lg text-center text-base">
-                    <Avatar />
+                    <Avatar src={currentUser?.image} />
                 </div>
                 {currentUser && (
                     <span className="hidden py-0 text-base font-semibold capitalize text-white md:block">
-                        Abdullah Bakry
+                        {currentUser?.name}
                     </span>
                 )}
             </div>
@@ -70,7 +72,10 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
                         <li role="listitem">
                             <NavLink
                                 label="Login"
-                                onClick={() => {}}
+                                onClick={() => {
+                                    loginModal.onOpen()
+                                    console.log('Clicked')
+                                }}
                                 icon={CiLogin}
                             />
                         </li>
@@ -103,7 +108,9 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
                         />
                         <NavLink
                             label="Logout"
-                            onClick={() => {}}
+                            onClick={() => {
+                                signOut()
+                            }}
                             icon={CiLogout}
                         />
                     </li>

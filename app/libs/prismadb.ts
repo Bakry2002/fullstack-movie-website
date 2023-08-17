@@ -4,8 +4,9 @@ declare global {
     var prisma: PrismaClient | undefined
 }
 
-const client = global.prisma || new PrismaClient()
+const client = globalThis.prisma || new PrismaClient()
 
-if (process.env.NODE_ENV === 'development') global.prisma = client // to prevent hot reload from creating new instances
+if (process.env.NODE_ENV !== 'production') globalThis.prisma = client
+// to avoid hot reloading in prisma with next js
 
 export default client

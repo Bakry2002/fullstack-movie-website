@@ -2,8 +2,8 @@ import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import nextAuth, { AuthOptions } from 'next-auth'
 
 //?providers
-import GoogleProvider from 'next-auth/providers/google'
 import GithubProvider from 'next-auth/providers/github'
+import GoogleProvider from 'next-auth/providers/google'
 import TwitterProvider from 'next-auth/providers/twitter'
 import CredentialsProvider from 'next-auth/providers/credentials'
 //? prisma client instance to be used in api routes

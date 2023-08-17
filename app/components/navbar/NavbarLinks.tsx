@@ -2,12 +2,10 @@
 
 import useSearchModal from '@/app/hooks/useSearchModal'
 import MenuItem from './NavLink'
-import Search from './Search'
 
 interface NavbarMenuProps {}
 
 const NavbarMenu: React.FC<NavbarMenuProps> = ({}) => {
-    const searchModal = useSearchModal()
     return (
         <div className="relative">
             <div className="hidden items-center md:flex">

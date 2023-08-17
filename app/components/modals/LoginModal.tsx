@@ -1,24 +1,29 @@
 'use client'
-import { useState, useCallback } from 'react'
+
 import useLoginModal from '@/app/hooks/useLoginModal'
 import useRegisterModal from '@/app/hooks/useRegisterModal'
-import { useForm, FieldValues, SubmitHandler } from 'react-hook-form'
-import Input from '../inputs/Input'
-import Heading from '../Heading'
-import Button from '../Button'
+
+import { useState, useCallback } from 'react'
+import { FieldValues, SubmitHandler, useForm } from 'react-hook-form'
 import { FcGoogle } from 'react-icons/fc'
 import { VscGithubInverted, VscTwitter } from 'react-icons/vsc'
+//? next-auth
+import { signIn } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
+import Heading from '../Heading'
+import Input from '../inputs/Input'
 //? assets
 import logo from '@/public/assets/movix-logo.png'
-
-import { signIn } from 'next-auth/react'
+import Button from '../Button'
 import Modal from './Modal'
-import axios from 'axios'
-import toast from 'react-hot-toast'
-const RegisterModal = () => {
-    const registerModal = useRegisterModal()
+const LoginModal = () => {
     const loginModal = useLoginModal()
+    const registerModal = useRegisterModal()
+
     const [isLoading, setIsLoading] = useState(false)
+
+    const router = useRouter()
 
     // form controller
     const {
@@ -28,7 +33,6 @@ const RegisterModal = () => {
         formState: { errors },
     } = useForm<FieldValues>({
         defaultValues: {
-            name: '',
             email: '',
             password: '',
         },
@@ -38,47 +42,39 @@ const RegisterModal = () => {
     const onSubmit: SubmitHandler<FieldValues> = (data) => {
         setIsLoading(true)
 
-        axios
-            .post('api/register', data)
-            .then(() => {
-                toast.success('Registered successfully!')
-                registerModal.onClose()
-                loginModal.onOpen()
-                // reset form
+        signIn('credentials', {
+            ...data,
+            redirect: false,
+        }).then((callback) => {
+            setIsLoading(false)
+
+            if (callback?.ok) {
+                toast.success('Logged in successfully!')
                 reset()
-            })
-            .catch((err) => {
-                toast.error('Something went wrong, register again!')
-                console.log(err)
-            })
-            .finally(() => {
-                setIsLoading(false)
-                // reset form
-            })
+                router.refresh()
+                loginModal.onClose()
+            }
+
+            if (callback?.error) {
+                toast.error(callback.error)
+            }
+        })
     }
 
-    //toggle between login and register modals
+    // toggle between login and register modals
     const toggleModals = useCallback(() => {
-        registerModal.onClose()
-        loginModal.onOpen()
-    }, [registerModal, loginModal])
+        loginModal.onClose() // close the login modal
+        registerModal.onOpen() // open the register modal
+    }, [loginModal, registerModal])
 
+    //body content
     const bodyContent: any = (
         <div className="flex flex-col gap-4">
             <Heading
-                image={logo}
-                title="Welcome to Movie it!"
-                subtitle="Create an account!"
+                title="Welcome back!"
+                subtitle="Login to your account!"
                 center
-            />
-            <Input
-                id="name"
-                label="Name"
-                disabled={isLoading}
-                register={register}
-                required
-                errors={errors}
-                validation={{ pattern: /^[A-Za-z\s]*$/ }} // only letters
+                image={logo}
             />
 
             <Input
@@ -88,21 +84,15 @@ const RegisterModal = () => {
                 register={register}
                 required
                 errors={errors}
-                validation={{
-                    pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                }} // email
             />
-
             <Input
                 id="password"
                 label="Password"
+                type="password"
                 disabled={isLoading}
                 register={register}
                 required
                 errors={errors}
-                validation={{
-                    minLength: 6,
-                }} // min length 6
             />
         </div>
     )
@@ -112,33 +102,38 @@ const RegisterModal = () => {
             <span className='relative text-neutral-700 before:absolute before:-top-3 before:left-1/2 before:z-10 before:flex before:w-10 before:-translate-x-1/2 before:items-center before:justify-center before:bg-white before:content-["or"]'>
                 <hr />
             </span>
+
             <Button
                 outline
                 label="Continue with Google"
                 icon={FcGoogle}
                 onClick={() => signIn('google')}
+                disabled={isLoading}
+            />
+            <Button
+                outline
+                label="Continue with Twitter"
+                icon={VscTwitter}
+                disabled={isLoading}
+                onClick={() => signIn('twitter')}
             />
             {/* <Button
                 outline
                 label="Continue with Github"
                 icon={VscGithubInverted}
+                disabled={isLoading}
                 onClick={() => signIn('github')}
             /> */}
-            <Button
-                outline
-                label="Continue with Twitter"
-                icon={VscTwitter}
-                onClick={() => signIn('twitter')}
-            />
-            {/* Already have account section */}
+
+            {/* Don't have account section */}
             <div className="mt-4 font-light text-neutral-500">
                 <div className="flex flex-row items-center justify-center gap-2 text-center">
-                    <div>Already have an account?</div>
+                    <div>First time here?</div>
                     <div
                         onClick={toggleModals}
                         className="cursor-pointer text-neutral-800 hover:underline"
                     >
-                        Log in
+                        Create an account
                     </div>
                 </div>
             </div>
@@ -147,15 +142,15 @@ const RegisterModal = () => {
     return (
         <Modal
             disabled={isLoading}
-            title="Create an account"
-            actionLabel="Register"
-            isOpen={registerModal.isOpen}
-            onClose={registerModal.onClose}
+            title="Login"
+            actionLabel="Login"
+            isOpen={loginModal.isOpen}
+            onClose={loginModal.onClose}
+            onSubmit={handleSubmit(onSubmit)}
             body={bodyContent}
             footer={footerContent}
-            onSubmit={handleSubmit(onSubmit)}
         />
     )
 }
 
-export default RegisterModal
+export default LoginModal
