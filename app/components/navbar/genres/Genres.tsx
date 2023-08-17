@@ -32,9 +32,9 @@ const Genres = () => {
         getGenres().then((data) => setGenres(data))
     }, [])
     return (
-        <div className="pt-20 shadow-sm">
+        <div className="w-full shadow-sm">
             <Container>
-                <div className="flex flex-row items-center justify-between overflow-x-auto py-2 md:pt-4">
+                <div className="flex flex-row items-center justify-between overflow-x-auto md:pt-2">
                     {genres &&
                         genres.length > 0 &&
                         genres.map(
