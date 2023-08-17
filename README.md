@@ -11,7 +11,7 @@
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the demo of the project.
 
 Note that: 
-This project uses the latest Next.js version 13.4 so, it runs on both the client side and server-side.
+This project uses the latest Next.js version 13.4 app router so, it runs on both the client side and server-side.
 
 ## Tools Used 
 
