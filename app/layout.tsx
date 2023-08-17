@@ -3,12 +3,12 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import ClientOnly from './components/ClientOnly'
 import Navbar from './components/navbar/Navbar'
-import Genres from './components/navbar/genres/Genres'
 import ToastProvider from './providers/ToastProvider'
 import RegisterModal from './components/modals/RegisterModal'
 import LoginModal from './components/modals/LoginModal'
 import getCurrentUser from './actions/getCurrentUser'
 import SearchModal from './components/modals/searchModal/SearchModal'
+
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -32,7 +32,6 @@ export default async function RootLayout({
                     <SearchModal />
                     <ToastProvider />
                     <Navbar currentUser={currentUser} />
-                    <Genres />
                 </ClientOnly>
                 {children}
             </body>
